@@ -114,11 +114,35 @@ kind create cluster --image=kindest/node:$KINDEST_NODE_VERSION --config=config/k
 
 
 make generate
-make build
-#Unit tests
-make test
 
-make docker-build
+if ! make build ; then
+        echo "------------------$PACKAGE_NAME:build_fails-------------------------------------"
+        echo "$PACKAGE_URL $PACKAGE_NAME"
+        echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | $OS_NAME | GitHub | Fail |  Install_Fails"
+        exit 1
+fi
+
+
+if ! make test; then
+        echo "------------------$PACKAGE_NAME:build_success_but_test_fails---------------------"
+        echo "$PACKAGE_URL $PACKAGE_NAME"
+        echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | $OS_NAME | GitHub | Fail |  build_success_but_test_fails"
+        exit 2
+else
+        echo "------------------$PACKAGE_NAME:build_&_test_both_success-------------------------"
+        echo "$PACKAGE_URL $PACKAGE_NAME"
+        echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | $OS_NAME | GitHub  | Pass |  Both_Build_and_Test_Success"
+fi
+
+if ! make docker-build; then
+        echo "------------------$PACKAGE_NAME:docke_build_fails---------------------"
+        echo "$PACKAGE_URL $PACKAGE_NAME"
+        echo "$PACKAGE_NAME  |  $PACKAGE_URL | $PACKAGE_VERSION | $OS_NAME | GitHub | Fail |  docke_build_fails"
+        exit 1
+else
+        echo "------------------$PACKAGE_NAME:docker_build_success-------------------------"
+        echo "$PACKAGE_URL $PACKAGE_NAME"
+  
 
 # Conclude
 set +ex
