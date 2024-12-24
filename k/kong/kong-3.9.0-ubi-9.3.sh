@@ -18,6 +18,11 @@
 #
 # --------------------------------------------------------------------------------
 
+if [ -z "${GITHUB_TOKEN}" ]; then
+  echo "missing github_token. Please set Environment Variable <GITHUB_TOKEN>"
+  exit 1
+fi
+
 PACKAGE_NAME=kong
 PACKAGE_VERSION=${1:-3.9.0}
 PACKAGE_URL=https://github.com/kong/kong/
